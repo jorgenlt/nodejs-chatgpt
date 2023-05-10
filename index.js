@@ -2,11 +2,11 @@ import readline from "readline";
 import { config } from 'dotenv';
 import fetch from 'node-fetch';
 
-// Loading at getting the api key from .env
+// loading and getting the api key from .env
 config();
 const key = process.env.API_KEY;
 
-// Banner to display in a typewriter style when starting the program
+// banner to display in a typewriter style when starting the program
 const typeWriterBanner = () => {
     const message = `
         \n___________________________________________________________________\n\n
