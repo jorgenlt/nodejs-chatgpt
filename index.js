@@ -2,51 +2,93 @@ import readline from "readline";
 import { config } from 'dotenv';
 import fetch from 'node-fetch';
 
+// Loading at getting the api key from .env
 config();
-
 const key = process.env.API_KEY;
 
-let chatHistory = [];
+// Banner to display in a typewriter style when starting the program
+const typeWriterBanner = () => {
+    const message = `
+        \n___________________________________________________________________\n\n
+        \tW E L C O M E   T O   C H A T G P T\t
+        \n___________________________________________________________________\n
+    `;
 
-const typeWriterWelcomeText = () => {
-    const message = 'Hello, what can I do for you today?';
     let i = 0;
     const intervalId = setInterval(() => {
-        if (i === 0) {
-            process.stdout.write(`🤖 ChatGPT: `);
-        }
         process.stdout.write(`\x1b[32m${message.charAt(i)}\x1b[0m`); 
         i++;
         if (i > message.length) {
             clearInterval(intervalId);
             console.log('\n');
-            userInterface.prompt();
         }
-    }, 30);
+    }, 7);
 };
 
+// welcome text to display after the banner
+const typeWriterWelcomeText = () => {
+        const message = 'What can I do for you today?';
+        let i = 0;
+        const intervalId = setInterval(() => {
+            if (i === 0) {
+                process.stdout.write(`🤖 ChatGPT: `);
+            }
+            process.stdout.write(`\x1b[32m${message.charAt(i)}\x1b[0m`); 
+            i++;
+            if (i > message.length) {
+                clearInterval(intervalId);
+                console.log('\n');
+                userInterface.prompt();
+            }
+        }, 15);
+    
+};
+
+// loading animation to use while waiting for the api response
+const loadingAnimation = () => {
+    let dots = '';
+    const intervalId = setInterval(() => {
+        process.stdout.clearLine();
+        process.stdout.cursorTo(0);
+        process.stdout.write(`\x1b[32m${dots}\x1b[0m`);
+        dots += '.';
+        if (dots.length > 20) {
+            dots = '';
+        }
+    }, 50);
+
+    return intervalId;
+};
+
+// new userInterface instance
 const userInterface = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
 });
 
-console.log('\x1b[36m%s\x1b[0m', '________________________');
-console.log('');
-console.log('\x1b[36m%s\x1b[0m', '   WELCOME TO CHATGPT   ');
-console.log('\x1b[36m%s\x1b[0m', '    Ask me anything!');
-console.log('\x1b[36m%s\x1b[0m', '________________________');
-console.log('');
-typeWriterWelcomeText();
+// executing the banner
+typeWriterBanner();
 
-userInterface.on('line', async (userMessage) => {
+// executing the welcome text after the banner is displayed
+setTimeout(() => {
+    typeWriterWelcomeText();
+}, 1600);
+
+// to store the chat history
+let chatHistory = [];
+
+// listening to the users input
+userInterface.on('line', async (userPrompt) => {
+    // getting the chat history and the new user prompt
     const requestMessages = [
         ...chatHistory,
         {
             role: "user", 
-            content: userMessage
+            content: userPrompt
         }
     ];
     
+    // putting together the options for the api call
     const options = {
         method: 'POST',
         headers: {
@@ -61,10 +103,20 @@ userInterface.on('line', async (userMessage) => {
     };
 
     console.log('');
+
+    // start the loading animation while waiting for api response
+    const loadingInterval = loadingAnimation();
     
+    // api call
     await fetch('https://api.openai.com/v1/chat/completions', options)
     .then(response => response.json())
     .then(data => {
+        process.stdout.cursorTo(0); 
+        process.stdout.clearLine();
+
+        // stopping the loading animation
+        clearInterval(loadingInterval);
+
         const responseMessage = data.choices[0].message;
         
         const message = responseMessage.content;        
@@ -74,18 +126,13 @@ userInterface.on('line', async (userMessage) => {
             if (i === message.length) {
                 clearInterval(intervalId);
                 setTimeout(() => {
-                    console.log('\x1b[37m'); // Change text color back to white
+                    // changing text color back to white
+                    console.log('\x1b[37m');
+
                     console.log('');
-                    const newMessages = [
-                        ...requestMessages,
-                        {
-                            role: responseMessage.role,
-                            content: responseMessage.content,
-                        }
-                    ];
-                    chatHistory = newMessages;
                 }, 50);
             } else {
+                // typing response char by char
                 process.stdout.write(message.charAt(i));
                 i++;
             }
@@ -99,6 +146,7 @@ userInterface.on('line', async (userMessage) => {
             }
         ];
         
+        // updating the chat history
         chatHistory = newMessages;
     })
     .catch(error => console.error(error));
