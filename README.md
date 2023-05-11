@@ -49,23 +49,25 @@
 
 To create an alias that allows you to open the program using the command gpt, follow these steps:
 
+1. Open `run-chatgpt.sh` in your editor and change directory path to your installation path.
 
-1. Open your terminal and navigate to the home directory by running the following command:
+
+2. Open your terminal and navigate to the home directory by running the following command:
   
     `cd`
 
 
-2. Edit the configuration file named .zshrc using the nano editor. Enter the following command:
+3. Edit the configuration file named .zshrc using the nano editor. Enter the following command:
   
     `nano .zshrc` or use your desired text editor.
 
 
-3. Within the .zshrc file (example is with the zsh framework), add the following line:
+4. Within the .zshrc file (example is with the zsh framework), add the following line:
   
     `alias gpt="$HOME/nodejs-chatgpt/run-chatgpt.sh"` or your installation path.
 
 
-4. Save the changes to the .zshrc file and exit the editor.
+5. Save the changes to the .zshrc file and exit the editor.
 
 
-5. Restart your terminal for the changes to take effect.
+6. Restart your terminal for the changes to take effect.
