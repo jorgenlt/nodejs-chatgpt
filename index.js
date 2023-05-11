@@ -9,9 +9,12 @@ const key = process.env.API_KEY;
 // banner to display in a typewriter style when starting the program
 const typeWriterBanner = () => {
     const message = `
-        \n___________________________________________________________________\n\n
-        \tW E L C O M E   T O   C H A T G P T\t
-        \n___________________________________________________________________\n
+        _______________________________________________________________
+        
+        
+        \tW E L C O M E   T O   C H A T G P T
+
+        _______________________________________________________________
     `;
 
     let i = 0;
