@@ -45,7 +45,7 @@
 
 <br/>
 
-## Creating an Alias to Open the Program with gpt:
+## Creating an Alias to open the program with `gpt`:
 
 To create an alias that allows you to open the program using the command gpt, follow these steps:
 
@@ -60,7 +60,7 @@ To create an alias that allows you to open the program using the command gpt, fo
     `nano .zshrc` or use your desired text editor.
 
 
-3. Within the .zshrc file, locate the section where aliases are defined. Add the following line:
+3. Within the .zshrc file (example is with the zsh framework), add the following line:
   
     `alias gpt="$HOME/nodejs-chatgpt/run-chatgpt.sh"` or your installation path.
 
